@@ -8,10 +8,16 @@ For this script to work the 3rd party library 'wand' is required.
     pip install wand
 Wand has dependencies on ImageMagick and Ghostscript.
 
-  + ImageMagick 7 is not yet supported so ImageMagick 6 should be 
-    installed (e.g. ImageMagick-6.9.9-37-Q16-HDRI-x64-dll) which can be
-    found here:
-        https://sourceforge.net/projects/imagemagick/files/
+  + ImageMagick 7 is not yet supported so ImageMagick 6 should be
+    installed from here: https://sourceforge.net/projects/imagemagick/files/
+      + 32-bit: ImageMagick-6.9.9-37-Q16-HDRI-x86-dll
+      + 64-bit: ImageMagick-6.9.9-37-Q16-HDRI-x64-dll
+
+
+    During the installation you will also need to follow the
+    instructions listed here:
+        http://docs.wand-py.org/en/latest/guide/install.html#install-imagemagick-on-windows
+
 
   + GhostScript can be downloaded under the AGPL license from the main
     website and the related python package using pip.
@@ -35,8 +41,8 @@ def pdf_to_png(pdf_filepath, pages=None, verbose=False):
     PARAMETERS
     ==========
         pdf_filepath: <str>
-            The filepath of the PDF to be converted into PNG images. 
-            All PNG images will be saved in the same directory in a new 
+            The filepath of the PDF to be converted into PNG images.
+            All PNG images will be saved in the same directory in a new
             folder  called "png".
 
         pages: <int> or [list of <int>] or None
@@ -66,7 +72,7 @@ def pdf_to_png(pdf_filepath, pages=None, verbose=False):
     png_filepath = os.path.join(png_directory, png_filename)
 
     if verbose: print(" > Converting '{}' to PNG images".format(pdf_filename))
- 
+
     # Use Wand to open the PDF as sequence of images and convert and
     # save these as PNG files.
     try:
@@ -77,7 +83,7 @@ def pdf_to_png(pdf_filepath, pages=None, verbose=False):
             # If pages is not defined then convert the entire document.
             if pages is None:
                 if verbose: print("    - Pages ALL/{}".format(pdf_page_count))
-                with pdf_img.convert("png") as converted:                
+                with pdf_img.convert("png") as converted:
                     converted.save(filename=png_filepath)
 
             # Otherwise, only convert the defined pages.
@@ -92,7 +98,7 @@ def pdf_to_png(pdf_filepath, pages=None, verbose=False):
                     index = page - 1
                     page_png_filepath = png_filepath.replace(".png", "-p{}.png".format(page))
                     with Image(pdf_pages[index]) as page_img:
-                        with page_img.convert("png") as converted:                
+                        with page_img.convert("png") as converted:
                             converted.save(filename=page_png_filepath)
 
     except CorruptImageError as e:
@@ -114,8 +120,8 @@ def pdf_cover_to_png(pdf_filepath, verbose=False):
     PARAMETERS
     ==========
         pdf_filepath: <str>
-            The filepath of the PDF to be converted into PNG images. 
-            All PNG images will be saved in the same directory in a new 
+            The filepath of the PDF to be converted into PNG images.
+            All PNG images will be saved in the same directory in a new
             folder  called "png"
 
         verbose: <bool>
@@ -142,5 +148,5 @@ if __name__ == "__main__":
     for filename in pdf_files:
         filepath = os.path.join(PDF_DIRECTORY, filename)
         pdf_cover_to_png(filepath, verbose=VERBOSE)
-    
+
     print("Complete.")
