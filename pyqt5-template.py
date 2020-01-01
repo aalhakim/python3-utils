@@ -28,7 +28,7 @@ class MainWindow(QtWidgets.QMainWindow):
         super(MainWindow, self).__init__()
 
         # Configure basic MainWindow properties
-        self.setWindowTitle("Elohmir - EDA Database Entry")
+        self.setWindowTitle("PyQt5 Example MainWindow")
         self.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
 
         # Add a status bar
