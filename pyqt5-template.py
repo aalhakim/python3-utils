@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-The main executable file for the Elohmir database program
+Template main window executable file for a PyQt5 project.
 
 Authors: Ali H Al-Hakim
 Date: 29 September 2018
