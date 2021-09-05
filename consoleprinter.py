@@ -1,6 +1,6 @@
 #!python3
 
-""" 
+"""
 Functions to print lists and dicts neatly to a console.
 """
 
@@ -70,7 +70,7 @@ def print_dict(data, columns):
         title, width, align = columns[column]
         config = "{:" + align + str(width) + "}"
         print(" {} |".format(config.format(data[column])), end="")
-        
+
 
 ########################################################################
 if __name__ == "__main__":
@@ -125,7 +125,7 @@ if __name__ == "__main__":
     for header in headers:
         columns[header] = _columns[header]
 
-   # Print the table
+    # Print the table
     print_header(columns)
     for row in data:
         print_dict(row, columns)
