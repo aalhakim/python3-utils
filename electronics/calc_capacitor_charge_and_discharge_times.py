@@ -44,10 +44,10 @@ def append_to_file(string):
 
 ########################################################################
 
-vsup = 3.3  # Volts
+vsup = 5.0  # Volts
 
-res = 1000000  # Ohms
-cap = 0.00002  # Farads
+res = mega(1.5)  # Ohms
+cap = micro(2 * 4.7)  # Farads
 
 tau = res*cap  # time constant
 
