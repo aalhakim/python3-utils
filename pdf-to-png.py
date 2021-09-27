@@ -71,7 +71,8 @@ def pdf_to_png(pdf_filepath, pages=None, verbose=False):
         os.makedirs(png_directory)
     png_filepath = os.path.join(png_directory, png_filename)
 
-    if verbose: print(" > Converting '{}' to PNG images".format(pdf_filename))
+    if verbose:
+        print(" > Converting '{}' to PNG images".format(pdf_filename))
 
     # Use Wand to open the PDF as sequence of images and convert and
     # save these as PNG files.
@@ -82,21 +83,34 @@ def pdf_to_png(pdf_filepath, pages=None, verbose=False):
 
             # If pages is not defined then convert the entire document.
             if pages is None:
-                if verbose: print("    - Pages ALL/{}".format(pdf_page_count))
+                if verbose:
+                    print("    - Pages ALL/{}".format(pdf_page_count))
                 with pdf_img.convert("png") as converted:
                     converted.save(filename=png_filepath)
 
             # Otherwise, only convert the defined pages.
             else:
-                if type(pages) == int: pages = [pages]
+                if type(pages) == int:
+                    pages = [pages]
                 for page in pages:
-                    assert(page > 0), "Invalid page number: {}. Pages must be positive integers.".format(page)
-                    assert(page <= pdf_page_count), "Invalid page number: '{}'. {} only has {} pages.".format(page, pdf_filename, pdf_pages)
-                    if verbose: print("    - Page {}/{}".format(page, pdf_page_count))
+                    assert (
+                        page > 0
+                    ), "Invalid page number: {}. Pages must be positive integers.".format(
+                        page
+                    )
+                    assert (
+                        page <= pdf_page_count
+                    ), "Invalid page number: '{}'. {} only has {} pages.".format(
+                        page, pdf_filename, pdf_pages
+                    )
+                    if verbose:
+                        print("    - Page {}/{}".format(page, pdf_page_count))
 
                     # Save the desired PDF pages as PNG files.
                     index = page - 1
-                    page_png_filepath = png_filepath.replace(".png", "-p{}.png".format(page))
+                    page_png_filepath = png_filepath.replace(
+                        ".png", "-p{}.png".format(page)
+                    )
                     with Image(pdf_pages[index]) as page_img:
                         with page_img.convert("png") as converted:
                             converted.save(filename=page_png_filepath)
@@ -111,7 +125,8 @@ def pdf_to_png(pdf_filepath, pages=None, verbose=False):
         # opened equally.
         print("ERROR:", e)
 
-    if verbose: print("    - Complete")
+    if verbose:
+        print("    - Complete")
 
 
 def pdf_cover_to_png(pdf_filepath, verbose=False):
@@ -144,7 +159,11 @@ if __name__ == "__main__":
     VERBOSE = True
 
     # Find all PDF files in PDF_DIRECTORY
-    pdf_files = [f for f in os.listdir(PDF_DIRECTORY) if os.path.isfile(os.path.join(PDF_DIRECTORY, f))]
+    pdf_files = [
+        f
+        for f in os.listdir(PDF_DIRECTORY)
+        if os.path.isfile(os.path.join(PDF_DIRECTORY, f))
+    ]
     for filename in pdf_files:
         filepath = os.path.join(PDF_DIRECTORY, filename)
         pdf_cover_to_png(filepath, verbose=VERBOSE)

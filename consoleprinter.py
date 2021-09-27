@@ -11,7 +11,7 @@ from collections import OrderedDict
 
 ########################################################################
 def print_list(list, line_length=88, sort=False):
-    """ Print a list to the console with limited row length.
+    """Print a list to the console with limited row length.
 
     Args:
         list <list>: The list to be printed.
@@ -40,11 +40,9 @@ def print_list(list, line_length=88, sort=False):
     print("\n")
 
 
-
 ########################################################################
 def print_header(columns):
-    """ Print a table header.
-    """
+    """Print a table header."""
     print_seperator(columns)
     print("\n  |", end="")
     for column in columns:
@@ -53,36 +51,54 @@ def print_header(columns):
         print(" {} |".format(config.format(title.upper())), end="")
     print_seperator(columns)
 
+
 def print_seperator(columns):
-    """ Print a table separater.
-    """
+    """Print a table separater."""
     print("\n  -".format(""), end="")
     for column in columns:
         title, width, align = columns[column]
         config = "{:-^" + str(width) + "}"
         print("-{}--".format(config.format("")), end="")
 
+
 def print_dict(data, columns):
-    """ Print a dict in a table format.
-    """
+    """Print a dict in a table format."""
     print("\n  |", end="")
     for column in columns:
         title, width, align = columns[column]
         config = "{:" + align + str(width) + "}"
         print(" {} |".format(config.format(data[column])), end="")
-        
+
 
 ########################################################################
 if __name__ == "__main__":
 
-    #-------------------------------------------------------------------
+    # -------------------------------------------------------------------
     print("-------------------------")
     print(" -- PRINT LIST EXAMPLE --")
     print("-------------------------")
 
     data = [
-        1990, 1996, 1999, 1992, 2001, 1995, 1993, 2007, 1997, 1991,
-        2008, 2003, 2002, 1994, 2004, 2005, 2006, 1998, 2000 ,2009
+        1990,
+        1996,
+        1999,
+        1992,
+        2001,
+        1995,
+        1993,
+        2007,
+        1997,
+        1991,
+        2008,
+        2003,
+        2002,
+        1994,
+        2004,
+        2005,
+        2006,
+        1998,
+        2000,
+        2009,
     ]
 
     print("Unsorted, Line length <= 60")
@@ -93,30 +109,72 @@ if __name__ == "__main__":
     print_list(data, line_length=30, sort=True)
     print()
 
-    #-------------------------------------------------------------------
+    # -------------------------------------------------------------------
     print("----------------------------------")
     print(" -- PRINT DICT AS TABLE EXAMPLE --")
     print("----------------------------------")
 
     # Define some data
     data = [
-        {"name": "Geralt",    "of": "Rivia",      "nationality": "",        "race": "Witcher",  "gender": "Male"},
-        {"name": "Triss",     "of": "Maribor",    "nationality": "Redania", "race": "Human",    "gender": "Female"},
-        {"name": "Dandelion", "of": "",           "nationality": "Redania", "race": "Human",    "gender": "Male"},
-        {"name": "Zoltan",    "of": "",           "nationality": "Mahakam", "race": "Dwarf",    "gender": "Male"},
-        {"name": "Renfri",    "of": "",           "nationality": "Creyden", "race": "Human",    "gender": "Female"},
-        {"name": "Yennefer",  "of": "Vengerberg", "nationality": "Aedirn",  "race": "Quadroon", "gender": "Female"},
-        {"name": "Cirilla",   "of": "",           "nationality": "Cintra",  "race": "Human",    "gender": "Female"}
+        {
+            "name": "Geralt",
+            "of": "Rivia",
+            "nationality": "",
+            "race": "Witcher",
+            "gender": "Male",
+        },
+        {
+            "name": "Triss",
+            "of": "Maribor",
+            "nationality": "Redania",
+            "race": "Human",
+            "gender": "Female",
+        },
+        {
+            "name": "Dandelion",
+            "of": "",
+            "nationality": "Redania",
+            "race": "Human",
+            "gender": "Male",
+        },
+        {
+            "name": "Zoltan",
+            "of": "",
+            "nationality": "Mahakam",
+            "race": "Dwarf",
+            "gender": "Male",
+        },
+        {
+            "name": "Renfri",
+            "of": "",
+            "nationality": "Creyden",
+            "race": "Human",
+            "gender": "Female",
+        },
+        {
+            "name": "Yennefer",
+            "of": "Vengerberg",
+            "nationality": "Aedirn",
+            "race": "Quadroon",
+            "gender": "Female",
+        },
+        {
+            "name": "Cirilla",
+            "of": "",
+            "nationality": "Cintra",
+            "race": "Human",
+            "gender": "Female",
+        },
     ]
 
     # Define a table configuration
     _columns = {
         # Header : (Column Name, Width, Alignment)
-        "name"        : ("Name",        10, " <"),
-        "of"          : ("Of",          10, " <"),
-        "nationality" : ("Nationality", 15, " <"),
-        "race"        : ("Race",        10, " <"),
-        "gender"      : ("Gender",       9, " >")
+        "name": ("Name", 10, " <"),
+        "of": ("Of", 10, " <"),
+        "nationality": ("Nationality", 15, " <"),
+        "race": ("Race", 10, " <"),
+        "gender": ("Gender", 9, " >"),
     }
 
     # Order the table configuration
@@ -125,7 +183,7 @@ if __name__ == "__main__":
     for header in headers:
         columns[header] = _columns[header]
 
-   # Print the table
+    # Print the table
     print_header(columns)
     for row in data:
         print_dict(row, columns)
