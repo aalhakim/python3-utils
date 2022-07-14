@@ -8,7 +8,11 @@ import time
 from smbus2 import SMBus
 
 
-##############################################################################
+########################################################################
+DEFAULT_I2C_BUS = 1
+
+
+########################################################################
 def handle_io_error(func):
     """Re-raise IO Errors with custom error message"""
     def inner(obj, *args, **kwargs):
@@ -22,7 +26,7 @@ def handle_io_error(func):
     return inner
 
 
-##############################################################################
+########################################################################
 class I2C_Driver(object):
 
     def __init__(self, bus=1, debug=False):
@@ -31,11 +35,11 @@ class I2C_Driver(object):
 
     def __del__(self):
         self.bus.close()
-    
+
     def set_bus(self, bus):
         """Change active I2C bus"""
         self.bus.close()
-        self.bus = SMBus(bus)  
+        self.bus = SMBus(bus)
 
     def _debug_log(self, mode, dev_addr, data=None, reg_addr=None):
         """Print debug message if self.dbg=True"""
@@ -62,14 +66,14 @@ class I2C_Driver(object):
         return data
 
     @handle_io_error
-    def write_byte_to_register(self, dev_addr, reg_addr, data):
+    def write_byte_to_reg(self, dev_addr, reg_addr, data):
         """Write a byte to a given register"""
         self.bus.write_byte_data(dev_addr, reg_addr, data)
         self._debug_log("wr", dev_addr, data, reg_addr)
         return data
 
     @handle_io_error
-    def write_word_to_register(self, dev_addr, reg_addr, data):
+    def write_word_to_reg(self, dev_addr, reg_addr, data):
         """Write 2 bytes to a given register"""
         self.bus.write_word_data(dev_addr, reg_addr, data)
         self._debug_log("wr", dev_addr, data, reg_addr)
@@ -97,7 +101,7 @@ class I2C_Driver(object):
         return data
 
 
-##############################################################################
+########################################################################
 def detect_devices(i2c_bus, device_list=[], debug=False):
     """
     Contact all devices in `device_list` (else use all valid 8-bit addresses)
@@ -106,19 +110,19 @@ def detect_devices(i2c_bus, device_list=[], debug=False):
     Args:
         i2c_bus <int>: I2C bus number
         device_list <[int]>: List of device addresses to search for
-    
+
     Returns:
         List of device addresses which responded to call
     """
     i2c = I2C_Driver(i2c_bus, debug=debug)
     address_list = []
-    
+
     if device_list == []:
         device_list = range(0x03, 0x78)
 
     for dev_addr in device_list:
         #start = time.time()  # Used to timeout non-acked addresses
-        
+
         # Contact address and wait for response.
         try:
             i2c.read_byte(dev_addr)
@@ -141,12 +145,7 @@ class BusError(Exception):
 
 
 
-##############################################################################
+########################################################################
 if __name__ == "__main__":
-
-    # Configure which I2C bus to communicate over.
-    I2C_BUS = 1
-
-    # Detect powered I2C devices on I2C_BUS
-    print(detect_devices(I2C_BUS, debug=True))
-
+    # Detect powered I2C devices on DEFAULT_I2C_BUS
+    print(detect_devices(DEFAULT_I2C_BUS, debug=True))
