@@ -18,6 +18,7 @@ from consoleprinter import dprint
 class CommandInUseError(Exception):
     """New option uses a command string already in use."""
 
+
 class CliAppIgnoreError(Exception):
     """Error which is caught and ignored by the CLI app."""
 

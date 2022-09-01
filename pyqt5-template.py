@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -15,14 +15,13 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 ########################################################################
-WINDOW_HEIGHT = 600 # in pixels
-WINDOW_WIDTH = 1000 # in pixels
+WINDOW_HEIGHT = 600  # in pixels
+WINDOW_WIDTH = 1000  # in pixels
 
 
 ########################################################################
 class MainWindow(QtWidgets.QMainWindow):
-    """ The main application window
-    """
+    """The main application window"""
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -39,31 +38,28 @@ class MainWindow(QtWidgets.QMainWindow):
         self.status_bar.showMessage("Ready")
 
     def keyPressEvent(self, event):
-        """ Handle key press events
+        """Handle key press events
 
         Keys that can be handled are listed in the Qt5 docs:
-          https://doc.qt.io/qt-5/qt.html#Key-enum
+            https://doc.qt.io/qt-5/qt.html#Key-enum
         """
         # Close MainWindow if the user presses ESC
         if event.key() == QtCore.Qt.Key_Escape:
             self.close()
 
     def resizeEvent(self, event):
-        """ Actions if the MainWindow object gets resized
-        """
+        """Actions if the MainWindow object gets resized"""
         # Fix status_bar to the width of MainWindow
         self.status_bar.setFixedWidth(self.width())
 
     def closeEvent(self, event):
-        """ Handle QObject close event (i.e. window is closed)
-        """
+        """Handle QObject close event (i.e. window is closed)"""
         print("Closing MainWindow")
 
 
 ########################################################################
 def close_app():
-    """ Actions prior to the application being shutdown
-    """
+    """Actions prior to the application being shutdown"""
     print("Closing Application")
 
 

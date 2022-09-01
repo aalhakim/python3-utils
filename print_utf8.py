@@ -1,6 +1,8 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import sys
+
 print("{}".format(sys.stdout.encoding))
 
 print("通道编号")

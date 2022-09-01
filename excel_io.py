@@ -9,7 +9,7 @@ Authors: Ali H Al-Hakim
 Date: 06 October 2018
 Written in Python 2.7
 """
-#Standard Library
+# Standard Library
 from __future__ import print_function
 import os
 
@@ -18,7 +18,7 @@ import openpyxl
 
 
 def open_xlsx(filepath):
-    """ Open an XLSX file
+    """Open an XLSX file
 
     This function uses `openppyxl` which is only compatible with XLSX
     files.
@@ -34,13 +34,16 @@ def open_xlsx(filepath):
     """
 
     f_extension = filepath.split(".")[-1].lower()
-    assert(f_extension == "xlsx"), "ERROR: File '{}' has extension `{}` but should be `xlsx`.".format(filepath, f_extension)
+    assert (
+        f_extension == "xlsx"
+    ), "ERROR: File '{}' has extension `{}` but should be `xlsx`.".format(
+        filepath, f_extension
+    )
     return openpyxl.load_workbook(filepath)
 
 
-
 def create_xlsx(filepath):
-    """ Create a new blank XLSX file
+    """Create a new blank XLSX file
 
     PARAMETERS
     ==========
@@ -60,7 +63,7 @@ def create_xlsx(filepath):
 
 
 def save_workbook(workbook, filepath):
-    """ Save a <openpyxl.workbook.Workbook> object to as an XLSX file
+    """Save a <openpyxl.workbook.Workbook> object to as an XLSX file
 
     PARAMETERS
     ==========
@@ -79,13 +82,13 @@ def save_workbook(workbook, filepath):
         filepath = filepath.strip(f_extension) + "xlsx"
 
     else:
-        pass # No action
+        pass  # No action
 
     workbook.save(filepath)
 
 
 def get_worksheet_names(workbook):
-    """ Return a list of sheet names in an XLXS workbook
+    """Return a list of sheet names in an XLXS workbook
 
     PARAMETERS
     ==========
@@ -102,12 +105,11 @@ def get_worksheet_names(workbook):
 
 
 def change_worksheet(workbook, ws_name):
-    """ Change the
-    """
+    """Change the"""
 
 
 def get_row_data(worksheet, row=1, length=50):
-    """ Return a list of data from row number `row`
+    """Return a list of data from row number `row`
 
 
     PARAMETERS
@@ -140,7 +142,7 @@ def get_row_data(worksheet, row=1, length=50):
 
 
 def get_header_names(worksheet):
-    """ Return a list of header names from an <openpyxl.worksheet.Worksheet>
+    """Return a list of header names from an <openpyxl.worksheet.Worksheet>
     object
 
     The end of the header group is determined by the first Null cell
@@ -171,7 +173,7 @@ def get_header_names(worksheet):
 
 
 def get_max_columns(worksheet, row=1):
-    """ Identify the number of columns in a worksheet table
+    """Identify the number of columns in a worksheet table
 
     PARAMETERS
     ==========
@@ -195,7 +197,8 @@ def get_max_columns(worksheet, row=1):
             # Stop counting if there are 10 consecutive Null cells
             if cell.value is None:
                 null_count += 1
-                if null_count == 10: break
+                if null_count == 10:
+                    break
             else:
                 length += null_count + 1
                 null_count = 0
@@ -203,7 +206,7 @@ def get_max_columns(worksheet, row=1):
 
 
 def get_max_rows(worksheet, column=1):
-    """ Identify the number of rows in a worksheet table
+    """Identify the number of rows in a worksheet table
 
     PARAMETERS
     ==========
@@ -227,7 +230,8 @@ def get_max_rows(worksheet, column=1):
             # Stop counting if there are 10 consecutive Null cells
             if cell.value is None:
                 null_count += 1
-                if null_count == 10: break
+                if null_count == 10:
+                    break
             else:
                 height += null_count + 1
                 null_count = 0
@@ -255,14 +259,10 @@ if __name__ == "__main__":
             print("'{}'".format(header), end=" ")
         print()
 
-        for row in range(2, table_height+1):
+        for row in range(2, table_height + 1):
             print()
             print(row, get_row_data(worksheet, row, table_length))
-
 
     NEW_FILE = "./test.xlsx"
     wb2 = create_xlsx(NEW_FILE)
     print(get_worksheet_names(wb2))
-
-
-
