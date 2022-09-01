@@ -1,10 +1,11 @@
+#!/usr/bin/env python3
 """
 High level I2C driver class for Linux systems.
 
 Based on adafruit_i2c.py but using smbus2 library.
 """
 
-import time
+# Third-party library imports
 from smbus2 import SMBus
 
 
@@ -15,6 +16,7 @@ DEFAULT_I2C_BUS = 1
 ########################################################################
 def handle_io_error(func):
     """Re-raise IO Errors with custom error message"""
+
     def inner(obj, *args, **kwargs):
         try:
             result = func(obj, *args, **kwargs)
@@ -28,8 +30,7 @@ def handle_io_error(func):
 
 ########################################################################
 class I2C_Driver(object):
-
-    def __init__(self, bus=1, debug=False):
+    def __init__(self, bus=DEFAULT_I2C_BUS, debug=False):
         self.bus = SMBus(bus)
         self.debug = debug
 
@@ -56,7 +57,6 @@ class I2C_Driver(object):
             else:
                 msg += f"{tofrom:>4s} DEVICE 0x{dev_addr:02X}"
             print(msg)
-
 
     @handle_io_error
     def write_byte(self, dev_addr, data):
@@ -95,7 +95,7 @@ class I2C_Driver(object):
 
     @handle_io_error
     def read_word_from_reg(self, dev_addr, reg_addr):
-        """ Read 2 bytes from a given register"""
+        """Read 2 bytes from a given register"""
         data = self.bus.read_word_data(dev_addr, reg_addr)
         self._debug_log("rd", dev_addr, data, reg_addr)
         return data
@@ -121,7 +121,7 @@ def detect_devices(i2c_bus, device_list=[], debug=False):
         device_list = range(0x03, 0x78)
 
     for dev_addr in device_list:
-        #start = time.time()  # Used to timeout non-acked addresses
+        # start = time.time()  # Used to timeout non-acked addresses
 
         # Contact address and wait for response.
         try:
@@ -133,16 +133,16 @@ def detect_devices(i2c_bus, device_list=[], debug=False):
         else:
             address_list.append(dev_addr)
 
-        #ts = time.time() - start
-        #if ts > 0.1: raise BusError(address)
+        # ts = time.time() - start
+        # if ts > 0.1: raise BusError(address)
 
     return address_list
 
 
 class BusError(Exception):
     """I2C bus has locked up due to a faulty device"""
-    pass
 
+    pass
 
 
 ########################################################################

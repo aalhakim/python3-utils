@@ -1,27 +1,31 @@
+#!/usr/bin/env python3
 """
 Calculations for a Schmitt Trigger using a comparator with
 an Open-Drain output.
-
-
 """
 
+
 def pot_div(vin, rtop, rbot):
-    return vin*rbot/(rtop+rbot)
+    return vin * rbot / (rtop + rbot)
+
 
 def reverse_pot_div(vref, rtop, rbot):
-    return vref*(rtop+rbot)/rbot
+    return vref * (rtop + rbot) / rbot
+
 
 def noninv_schmitt_vminus(vin, vout, r1, r2, r3):
     num1 = vin * r2 * r3
     num2 = vout * r1 * r2
-    den1 = r1*r2 + r2*r3 + r1*r3
+    den1 = r1 * r2 + r2 * r3 + r1 * r3
     return (num1 + num2) / den1
 
+
 def noninv_schmitt_vinput(vplus, vout, r1, r2, r3):
-    num1 = vplus*(r1*r2 + r2*r3 + r1*r3)
+    num1 = vplus * (r1 * r2 + r2 * r3 + r1 * r3)
     num2 = vout * r1 * r2
     den1 = r2 * r3
     return (num1 - num2) / den1
+
 
 def noninv_schmitt_r_feedback(vout_hi, vout_lo, vref, vdd, r4):
     """
@@ -39,6 +43,7 @@ def noninv_schmitt_r_feedback(vout_hi, vout_lo, vref, vdd, r4):
         print((vref - vout))
         print((vout - vdd))
         print(r4 * (vref - vout) / (vout - vdd))
+
 
 ########################################################################
 # Potential divider resistors for input voltage
@@ -71,8 +76,8 @@ vplus_hi = pot_div(vin_hi, r1, r2)
 
 
 r3_num = vref * r1 * r2
-r3_den = (vin_lo*r2) + vref*(r1 + r2)
-r3 = r3_num/r3_den
+r3_den = (vin_lo * r2) + vref * (r1 + r2)
+r3 = r3_num / r3_den
 print(r3)
 
 # if R3_OVERRIDE:

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-
 """ Common file actions.
 """
+
 # Standard library imports
 import os
 

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 """
 Convert a PDF into PNG file(s).
 
@@ -8,10 +7,10 @@ For this script to work the 3rd party library 'wand' is required.
     pip install wand
 Wand has dependencies on ImageMagick and Ghostscript.
 
-  + ImageMagick 7 is not yet supported so ImageMagick 6 should be
-    installed from here: https://sourceforge.net/projects/imagemagick/files/
-      + 32-bit: ImageMagick-6.9.9-37-Q16-HDRI-x86-dll
-      + 64-bit: ImageMagick-6.9.9-37-Q16-HDRI-x64-dll
+    + ImageMagick 7 is not yet supported so ImageMagick 6 should be
+        installed from here: https://sourceforge.net/projects/imagemagick/files/
+        + 32-bit: ImageMagick-6.9.9-37-Q16-HDRI-x86-dll
+        + 64-bit: ImageMagick-6.9.9-37-Q16-HDRI-x64-dll
 
 
     During the installation you will also need to follow the
@@ -19,7 +18,7 @@ Wand has dependencies on ImageMagick and Ghostscript.
         http://docs.wand-py.org/en/latest/guide/install.html#install-imagemagick-on-windows
 
 
-  + GhostScript can be downloaded under the AGPL license from the main
+    + GhostScript can be downloaded under the AGPL license from the main
     website and the related python package using pip.
         https://www.ghostscript.com/download.html
         pip install ghostscript
@@ -29,7 +28,11 @@ Written By (Last Updated)
     Ali Al-Hakim (30 September 2018)
 
 """
+
+# Standard library imports
 import os
+
+# Third-party library imports
 from wand.image import Image
 from wand.exceptions import *
 

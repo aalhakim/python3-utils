@@ -6,9 +6,8 @@ Functions to print lists and dicts neatly to a console.
 
 # Standard library imports
 from __future__ import print_function
-
-import time
 from collections import OrderedDict
+import time
 
 
 ########################################################################

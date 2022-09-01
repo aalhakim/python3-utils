@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Zebra Printer barcode and label printing code using EPL2.
 Tested with Zebra GK420t only
@@ -6,11 +7,11 @@ Contributed by: Kyle McInnes, Ali H Al-Hakim
 Last Updated: 22 October 2018
 """
 
-# Standard Library Imports
+# Standard library imports
 from __future__ import print_function
 import os
 
-# Third-Party Library Imports
+# Third-party library imports
 from zebra import zebra
 
 

@@ -1,6 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 """
 Some example code on how to read from and write to a Microsoft Excel
 document.
@@ -9,11 +8,12 @@ Authors: Ali H Al-Hakim
 Date: 06 October 2018
 Written in Python 2.7
 """
-# Standard Library
+
+# Standard library imports
 from __future__ import print_function
 import os
 
-# Third-Party Library
+# Third-party libray imports
 import openpyxl
 
 

@@ -7,6 +7,7 @@ Adds a simple base class to create and run a simple looping command
 line application with options to run different actions based on user
 input.
 """
+
 # Standard library imports
 import traceback
 

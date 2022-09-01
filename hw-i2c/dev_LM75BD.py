@@ -1,25 +1,53 @@
+#!/usr/bin/env python3
 """
 LM75BD Temperature Monitor Device
 """
 
-from i2c_driver import I2C_Driver, DEFAULT_I2C_BUS
+# Local library imports
+from i2c_driver import I2C_Driver
 
 
 ########################################################################
 # Register List
-LM75BD_REG_ADDR_TEMP       = 0x00  # Temperature measurement
-LM75BD_REG_ADDR_CONFIG     = 0x01  # Configuration
+LM75BD_REG_ADDR_TEMP = 0x00  # Temperature measurement
+LM75BD_REG_ADDR_CONFIG = 0x01  # Configuration
 LM75BD_REG_ADDR_HYSTERESIS = 0x02  # Hysteresis config
-LM75BD_REG_ADDR_OVERTEMP   = 0x03  # Overtemperature shutdown threshold
+LM75BD_REG_ADDR_OVERTEMP = 0x03  # Overtemperature shutdown threshold
 
 
 ########################################################################
 class LM75BD_I2C_Temperature_Monitor(object):
-
-    def __init__(self, dev_addr, i2c_driver=I2C_Driver(DEFAULT_I2C_BUS)):
+    def __init__(self, dev_addr, i2c_driver: I2C_Driver):
         self.addr = dev_addr
         self._i2c = i2c_driver
-        self.config = self.get_config()
+
+        self.reg_data = {
+            LM75BD_REG_ADDR_TEMP: 0x00,
+            LM75BD_REG_ADDR_CONFIG: 0x00,
+            LM75BD_REG_ADDR_HYSTERESIS: 0x00,
+            LM75BD_REG_ADDR_OVERTEMP: 0x00,
+        }
+
+    def _i2c_read(self, reg_addr):
+        """Send read command to reg_addr
+
+        Args:
+            reg_addr <int>: Register address to write to.
+
+        Raises:
+            IOError: May be raised if write_byte_to_reg fails.
+
+        Returns:
+            <int>: Read data result
+        """
+        data = self._i2c.read_word_from_reg(self.addr, reg_addr)
+        self.reg_data[reg_addr] = data
+        return data
+
+    def init(self):
+        """Load current status of device registers"""
+        for reg in self.reg_data.keys():
+            self.reg_data[reg] = self._i2c_read(reg)
 
     def get_config(self):
         """Read settings stored in configuration register"""
@@ -30,7 +58,9 @@ class LM75BD_I2C_Temperature_Monitor(object):
         if new_config != self.config:
             # Only send command if there are some changes
             try:
-                self._i2c.write_byte_to_reg(self.addr, LM75BD_REG_ADDR_CONFIG, new_config)
+                self._i2c.write_byte_to_reg(
+                    self.addr, LM75BD_REG_ADDR_CONFIG, new_config
+                )
             except IOError:
                 pass
             else:
@@ -43,7 +73,7 @@ class LM75BD_I2C_Temperature_Monitor(object):
         be discarded. The reading is signed 2s complement thus represents a
         positive or negative temperature reading. Each bit represents 0.125 degC.
         """
-        temp = self._i2c.read_word_from_reg(self.addr, LM75BD_REG_ADDR_TEMP)
+        temp = self._i2c_read(LM75BD_REG_ADDR_TEMP)
 
         # Swap MSB and LSB and remove 5 unused LSB
         temp = ((temp << 8) & 0xFF00) + (temp >> 8)

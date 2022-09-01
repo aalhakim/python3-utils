@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 """
 Template main window executable file for a PyQt5 project.
 
 Authors: Ali H Al-Hakim
 Date: 29 September 2018
 """
-# Standard Library
+
+# Standard libray imports
 import sys
 
-# Third Party Library
+# Third-party library imports
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
