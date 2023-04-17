@@ -1,33 +1,24 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-Some example code on how to read from and write to a Microsoft Excel
-document.
-
-Authors: Ali H Al-Hakim
-Date: 06 October 2018
-Written in Python 2.7
+Example code on how to read from and write to a Microsoft Excel document.
 """
 
 # Standard library imports
-from __future__ import print_function
 import os
 
 # Third-party libray imports
 import openpyxl
 
 
+###############################################################################
 def open_xlsx(filepath):
     """Open an XLSX file
-
     This function uses `openppyxl` which is only compatible with XLSX
     files.
-
     PARAMETERS
     ==========
     filepath: <str>
         The absolute path of the file you want to open.
-
     RETURNS
     =======
     This function will return an <openpyxl.workbook.Workbook> object.
@@ -44,12 +35,10 @@ def open_xlsx(filepath):
 
 def create_xlsx(filepath):
     """Create a new blank XLSX file
-
     PARAMETERS
     ==========
     filepath: <str>
         The location when the new XLSX file will be saved.
-
     RETURNS
     =======
     This function will return the new blank <openpyxl.workbook.Workbook>
@@ -64,7 +53,6 @@ def create_xlsx(filepath):
 
 def save_workbook(workbook, filepath):
     """Save a <openpyxl.workbook.Workbook> object to as an XLSX file
-
     PARAMETERS
     ==========
     filepath: <str>
@@ -89,12 +77,10 @@ def save_workbook(workbook, filepath):
 
 def get_worksheet_names(workbook):
     """Return a list of sheet names in an XLXS workbook
-
     PARAMETERS
     ==========
     workbook: <openpyxl.workbook.Workbook>
         An XLSX workbook object
-
     RETURNS
     =======
     This function will return a [list of <str>] of all the worksheet
@@ -104,30 +90,35 @@ def get_worksheet_names(workbook):
     return workbook.sheetnames
 
 
-def change_worksheet(workbook, ws_name):
-    """Change the"""
+def get_worksheet(workbook, worksheet_name):
+    """Retrieve data from the given worksheet.
+    PARAMETERS
+    ==========
+    workbook: <openpyxl.workbook.Workbook>
+        An XLSX workbook object
+    worksheet_name: <str>
+        The name of a valid <openpyxl.worksheet.Worksheet> object.
+    RETURNS
+    =======
+    This function will return a [] of all data in the worksheet.
+    """
+    return workbook[worksheet_name]
 
 
 def get_row_data(worksheet, row=1, length=50):
     """Return a list of data from row number `row`
-
-
     PARAMETERS
     ==========
-    worksheet: <str>
-        The name of an <openpyxl.worksheet.Worksheet> object.
-
+    worksheet: <openpyxl.worksheet.Worksheet>
+        A Worksheet object.
     row: <int>
-       ID of the row to retrieve data for
-
+        ID of the row to retrieve data for
     length: <int>
         The number of columns to retieve data for
-
     RETURNS
     =======
     This function will return a [list of <str>] of length `length`
     containing data from the cells of row `row`.
-
     """
 
     data = []
@@ -144,16 +135,13 @@ def get_row_data(worksheet, row=1, length=50):
 def get_header_names(worksheet):
     """Return a list of header names from an <openpyxl.worksheet.Worksheet>
     object
-
     The end of the header group is determined by the first Null cell
     in the first row of the document. i.e. the first time a value
     is None is find will determine the end of the headers.
-
     PARAMETERS
     ==========
-    worksheet: <str>
-        The name of an <openpyxl.worksheet.Worksheet> object.
-
+    worksheet: <openpyxl.worksheet.Worksheet>
+        A worksheet object.
     RETURNS
     =======
     This function will return a [list of <str>] with a length
@@ -174,20 +162,16 @@ def get_header_names(worksheet):
 
 def get_max_columns(worksheet, row=1):
     """Identify the number of columns in a worksheet table
-
     PARAMETERS
     ==========
-    worksheet: <str>
-        The name of an <openpyxl.worksheet.Worksheet> object.
-
+    worksheet: <openpyxl.worksheet.Worksheet>
+        A worksheet object.
     row: <int>
         Select which row to use to count the table length.
-
     RETURNS
     =======
     This function will return an <int> value to indicate the number
     of columns in given row.
-
     """
 
     length = 0
@@ -207,20 +191,16 @@ def get_max_columns(worksheet, row=1):
 
 def get_max_rows(worksheet, column=1):
     """Identify the number of rows in a worksheet table
-
     PARAMETERS
     ==========
-    worksheet: <str>
-        The name of an <openpyxl.worksheet.Worksheet> object.
-
+    worksheet: <openpyxl.worksheet.Worksheet>
+        A worksheet object.
     column: <int>
         Select which column to use to count the table height.
-
     RETURNS
     =======
     This function will return an <int> value to indicate the number
     of rows in the given column.
-
     """
 
     height = 0
@@ -240,7 +220,6 @@ def get_max_rows(worksheet, column=1):
 
 ########################################################################
 if __name__ == "__main__":
-
     TEST_FILE = "transistors.xlsx"
     workbook = open_xlsx(TEST_FILE)
     worksheet_names = get_worksheet_names(workbook)
