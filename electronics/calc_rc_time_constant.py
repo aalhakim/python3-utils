@@ -17,7 +17,7 @@ sys.path.append(pkg_dir)
 
 
 # Local library imports
-from common.eng_multipliers import *
+from utils.eng_multipliers import *
 
 
 ###############################################################################
