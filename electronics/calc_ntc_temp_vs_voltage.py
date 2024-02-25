@@ -1,6 +1,6 @@
 """
-Calculate temperature from the NTCLE100E3 NTC from Vishay
-The equation is taken from the component datasheet
+Calculate NTC resistance versus temperature, and the effects on a potential
+divider network.
 
 
     ^ VSUP   ^                  NTC_POS = "top"
@@ -27,16 +27,16 @@ The equation is taken from the component datasheet
     v        v
 
 """
+
 import math
 
 ########################################################################
-ISL94202_TGAIN_BIT = 1    # The TGain bit setting of the ISL94202
+NTC_POS = "bot"  # Use 'bot' or 'top'
 
-NTC_POS = "top"  # Use 'bot' or 'top'
+RTOP_TEMP_SENSOR = 100e3  # The NTC network top resistor, in Ohms
+RBOT_TEMP_SENSOR = 10e12  # The NTC network bottom resistor, in Ohms
 
-RTOP_TEMP_SENSOR = 1000000000000    # The NTC network top resistor, in Ohms
-RBOT_TEMP_SENSOR = 56000    # The NTC network bottom resistor, in Ohms
-VSUP_TEMP_SENSOR = 3.3      # The NTC network voltage reference, in Volts
+VSUP_TEMP_SENSOR = 5.0  # The NTC network voltage reference, in Volts
 
 # NTC Properties
 # 25/85 Beta Values:
@@ -44,14 +44,15 @@ VSUP_TEMP_SENSOR = 3.3      # The NTC network voltage reference, in Volts
 #   + 3434: Murata NCP03XH103F (10k)
 #   + 3434: Murata NCU18XH103F60RB (10k)
 #   + 4250: Murata NCU18WF104F6SRB (100k)
-NTC_R25 = 100000            # The NTC resistance at 25degC, in Ohms
-NTC_BETA_2585 = 4250        # The NTC temperature coefficient (beta)
+NTC_R25 = 100000  # The NTC resistance at 25degC, in Ohms
+NTC_BETA_2585 = 4250  # The NTC temperature coefficient (beta)
+
 NTC_PROPERTY_A1 = 3.354016e-3
 NTC_PROPERTY_B1 = 2.569850e-4
 NTC_PROPERTY_C1 = 2.620131e-6
 NTC_PROPERTY_D1 = 6.383091e-8
 
-ZERO_CELSIUS_IN_KELVIN = 273.15 # Used to calculate NTC temperature
+kZERO_CELSIUS_IN_KELVIN = 273.15  # Used to calculate NTC temperature
 
 
 ########################################################################
@@ -64,14 +65,16 @@ def calc_ntc_resistance_from_volts(vMeas, ntcPos="bot"):
     # This equation is the equation of the NTC potential divider
     # network with NTC resistance as the subject
     if ntcPos == "bot":
-        rThermistor = (
-            (vMeas * RTOP_TEMP_SENSOR * RBOT_TEMP_SENSOR) /
-            ((VSUP_TEMP_SENSOR * RBOT_TEMP_SENSOR) - (vMeas * (RTOP_TEMP_SENSOR + RBOT_TEMP_SENSOR)))
+        rThermistor = (vMeas * RTOP_TEMP_SENSOR * RBOT_TEMP_SENSOR) / (
+            (VSUP_TEMP_SENSOR * RBOT_TEMP_SENSOR)
+            - (vMeas * (RTOP_TEMP_SENSOR + RBOT_TEMP_SENSOR))
         )
     elif ntcPos == "top":
         rThermistor = (
-            (RTOP_TEMP_SENSOR * RBOT_TEMP_SENSOR * (VSUP_TEMP_SENSOR - vMeas)) /
-            ((vMeas * (RTOP_TEMP_SENSOR + RBOT_TEMP_SENSOR)) - (VSUP_TEMP_SENSOR * RBOT_TEMP_SENSOR))
+            RTOP_TEMP_SENSOR * RBOT_TEMP_SENSOR * (VSUP_TEMP_SENSOR - vMeas)
+        ) / (
+            (vMeas * (RTOP_TEMP_SENSOR + RBOT_TEMP_SENSOR))
+            - (VSUP_TEMP_SENSOR * RBOT_TEMP_SENSOR)
         )
     else:
         raise RuntimeError(f"Unknown value of ntcPos: '{ntcPos}'.")
@@ -86,7 +89,10 @@ def calc_ntc_resistance_from_celsius(tCelsius):
     """
 
     # This is Thermistor Beta Equation with NTC resistance as the subject
-    exponent = NTC_BETA_2585 * ((1/(ZERO_CELSIUS_IN_KELVIN+tCelsius)) - (1/(ZERO_CELSIUS_IN_KELVIN+25.0)))
+    exponent = NTC_BETA_2585 * (
+        (1 / (kZERO_CELSIUS_IN_KELVIN + tCelsius))
+        - (1 / (kZERO_CELSIUS_IN_KELVIN + 25.0))
+    )
     rThermistor = NTC_R25 * math.exp(exponent)
     return rThermistor
 
@@ -103,17 +109,16 @@ def convert_temp_volts_to_celsius_shh(tVolts):
     # The temperature in Kelvin can then be calculated using the
     # Steinhart-Hart equation. The below version is taken from the
     # Vishay NTCLE100E3 datasheet.
-    tKelvin = (1 / (
-        (NTC_PROPERTY_A1) +
-        (NTC_PROPERTY_B1 * math.log(rThermistorOhms/NTC_R25)) +
-        (NTC_PROPERTY_C1 * pow(math.log(rThermistorOhms/NTC_R25), 2.0)) +
-        (NTC_PROPERTY_D1 * pow(math.log(rThermistorOhms/NTC_R25), 3.0))
-    ))
+    tKelvin = 1 / (
+        (NTC_PROPERTY_A1)
+        + (NTC_PROPERTY_B1 * math.log(rThermistorOhms / NTC_R25))
+        + (NTC_PROPERTY_C1 * pow(math.log(rThermistorOhms / NTC_R25), 2.0))
+        + (NTC_PROPERTY_D1 * pow(math.log(rThermistorOhms / NTC_R25), 3.0))
+    )
 
     # Converter the result from Kelvin to Celsius
-    tCelsius = tKelvin - ZERO_CELSIUS_IN_KELVIN
+    tCelsius = tKelvin - kZERO_CELSIUS_IN_KELVIN
     return tCelsius
-
 
 
 def convert_temp_volts_to_celsius_beta(tVolts):
@@ -126,10 +131,12 @@ def convert_temp_volts_to_celsius_beta(tVolts):
     rThermistorOhms = calc_ntc_resistance_from_volts(tVolts, NTC_POS)
 
     # This is Thermistor Beta Equation with current temperature as the subject
-    tKelvin = 1 / ((math.log(rThermistorOhms / NTC_R25) / NTC_BETA_2585) + (1 / (ZERO_CELSIUS_IN_KELVIN + 25.0)))
-    tCelsius = tKelvin - ZERO_CELSIUS_IN_KELVIN
+    tKelvin = 1 / (
+        (math.log(rThermistorOhms / NTC_R25) / NTC_BETA_2585)
+        + (1 / (kZERO_CELSIUS_IN_KELVIN + 25.0))
+    )
+    tCelsius = tKelvin - kZERO_CELSIUS_IN_KELVIN
     return tCelsius
-
 
 
 def convert_temp_celsius_to_volts(tCelsius, ntcPos="bot"):
@@ -140,22 +147,25 @@ def convert_temp_celsius_to_volts(tCelsius, ntcPos="bot"):
 
     rThermistorOhms = calc_ntc_resistance_from_celsius(tCelsius)
 
-    # Work out what gain is applied to the measured voltage
-    if   (ISL94202_TGAIN_BIT == 0): gain = 2
-    elif (ISL94202_TGAIN_BIT == 1): gain = 1
-    else:                           raise(RuntimeError)
-
     # This equation is the equation of the NTC potential divider
     # network with the output voltage as the subject
     if ntcPos == "bot":
-        tVolts = gain * VSUP_TEMP_SENSOR * (
-            (RBOT_TEMP_SENSOR * rThermistorOhms) /
-            (RTOP_TEMP_SENSOR * RBOT_TEMP_SENSOR + RTOP_TEMP_SENSOR * rThermistorOhms + RBOT_TEMP_SENSOR * rThermistorOhms)
+        tVolts = VSUP_TEMP_SENSOR * (
+            (RBOT_TEMP_SENSOR * rThermistorOhms)
+            / (
+                RTOP_TEMP_SENSOR * RBOT_TEMP_SENSOR
+                + RTOP_TEMP_SENSOR * rThermistorOhms
+                + RBOT_TEMP_SENSOR * rThermistorOhms
+            )
         )
     elif ntcPos == "top":
-        tVolts = gain * VSUP_TEMP_SENSOR * (
-            (RBOT_TEMP_SENSOR * rThermistorOhms + RTOP_TEMP_SENSOR * RBOT_TEMP_SENSOR) /
-            (RTOP_TEMP_SENSOR * RBOT_TEMP_SENSOR + RTOP_TEMP_SENSOR * rThermistorOhms + RBOT_TEMP_SENSOR * rThermistorOhms)
+        tVolts = VSUP_TEMP_SENSOR * (
+            (RBOT_TEMP_SENSOR * rThermistorOhms + RTOP_TEMP_SENSOR * RBOT_TEMP_SENSOR)
+            / (
+                RTOP_TEMP_SENSOR * RBOT_TEMP_SENSOR
+                + RTOP_TEMP_SENSOR * rThermistorOhms
+                + RBOT_TEMP_SENSOR * rThermistorOhms
+            )
         )
     else:
         raise RuntimeError(f"Unknown value of ntcPos: '{ntcPos}'.")
@@ -169,13 +179,17 @@ if __name__ == "__main__":
 
     print("")
     print("  +-{0:-^14s}-|-{0:-^14s}-|-{0:-^14s}-|-{0:-^7s}-+".format(""))
-    print("  | {0: ^14s} | {1: ^14s} | {2: ^14s} | {3: ^7s} |".format("RESISTANCE", "STEINHART-HART", "BETA", "VOLTAGE"))
+    print(
+        "  | {0: ^14s} | {1: ^14s} | {2: ^14s} | {3: ^7s} |".format(
+            "RESISTANCE", "STEINHART-HART", "BETA", "VOLTAGE"
+        )
+    )
     print("  +-{0:-^14s}-|-{0:-^14s}-|-{0:-^14s}-|-{0:-^7s}-+".format(""))
 
     # Calculate NTC resistance and estimated temperature based on voltage
     # The voltage range is limited to 0 V and vrange V.
-    vrange = 3.2
-    increment = 0.01
+    vrange = VSUP_TEMP_SENSOR - 0.01
+    increment = 0.05
     voltage = increment
     voltage_range = []
     while voltage < min(vrange, VSUP_TEMP_SENSOR) - increment:
@@ -200,18 +214,23 @@ if __name__ == "__main__":
         else:
             temp_celsius_beta = "{:+.2f}".format(temp_celsius_beta) + " degC"
 
-        print("  | {: >14s} | {: >14s} | {: >14s} | {: >7s} |".format(
-            "{: .0f}".format(r_thermistor) + " Ohms",
-            temp_celsius_shh,
-            temp_celsius_beta,
-            "{: .2f}".format(temp_volts) + " V"
-        ))
+        print(
+            "  | {: >14s} | {: >14s} | {: >14s} | {: >7s} |".format(
+                "{: .0f}".format(r_thermistor) + " Ohms",
+                temp_celsius_shh,
+                temp_celsius_beta,
+                "{: .2f}".format(temp_volts) + " V",
+            )
+        )
     print("  +-{0:-^14s}-|-{0:-^14s}-|-{0:-^14s}-|-{0:-^7s}-+".format(""))
-
 
     print("")
     print("  +-{0:-^14s}-|-{0:-^14s}-|-{0:-^7s}-+".format(""))
-    print("  | {0: ^14s} | {1: ^14s} | {2: ^7s} |".format("TEMPERATURE", "RESISTANCE", "VOLTAGE"))
+    print(
+        "  | {0: ^14s} | {1: ^14s} | {2: ^7s} |".format(
+            "TEMPERATURE", "RESISTANCE", "VOLTAGE"
+        )
+    )
     print("  +-{0:-^14s}-|-{0:-^14s}-|-{0:-^7s}-+".format(""))
 
     # Calculate expected NTC resistance and NTC potential divider voltages
@@ -220,10 +239,12 @@ if __name__ == "__main__":
     for temp_celsius in temp_range:
         r_thermistor = calc_ntc_resistance_from_celsius(temp_celsius)
         temp_volts = convert_temp_celsius_to_volts(temp_celsius, NTC_POS)
-        print("  | {: >14s} | {: >14s} | {: >7s} |".format(
-            "{:+.0f}".format(temp_celsius) + " degC",
-            "{: .0f}".format(r_thermistor) + " Ohms",
-            "{:.3f}".format(temp_volts) + " V"
-        ))
+        print(
+            "  | {: >14s} | {: >14s} | {: >7s} |".format(
+                "{:+.0f}".format(temp_celsius) + " degC",
+                "{: .0f}".format(r_thermistor) + " Ohms",
+                "{:.3f}".format(temp_volts) + " V",
+            )
+        )
 
     print("  +-{0:-^14s}-|-{0:-^14s}-|-{0:-^7s}-+".format(""))
