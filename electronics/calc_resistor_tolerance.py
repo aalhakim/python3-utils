@@ -60,18 +60,18 @@ def pot_div_gain(rtop, rtop_tol, rbot, rbot_tol, gain):
 # --- Main Code
 ###############################################################################
 if __name__ == "__main__":
-    print("  RTOP = {} Ohms".format(RTOP))
-    print("  RBOT = {} Ohms".format(RBOT))
+    print(f"  RTOP = {RTOP} Ohms")
+    print(f"  RBOT = {RBOT} Ohms")
 
     vfb_string = "\n"
     if VFB_MIN is not None:
-        vfb_string += f"  VFB_MIN = {VFB_MIN:0.03f} V\n"
-    vfb_string += f"  VFB_NOM = {VFB:0.03f} V"
+        vfb_string += f"  VFB_MIN = {round(VFB_MIN, 3)} V\n"
+    vfb_string += f"  VFB_NOM = {round(VFB, 3)} V"
     if VFB_MAX is not None:
-        vfb_string += f"\n  VFB_MAX = {VFB_MAX:0.03f} V"
+        vfb_string += f"\n  VFB_MAX = {round(VFB_MAX, 3)} V"
 
     if CALCULATE_VFB_FROM_VIN:
-        print("\n   VIN = {} V".format(VIN))
+        print(f"\n   VIN = {VIN} V")
     else:
         print(vfb_string)
 
@@ -89,17 +89,16 @@ if __name__ == "__main__":
 
         print(f"\n  RESISTOR TOLERANCE {tolerance}%\n ------------------------")
         if CALCULATE_VFB_FROM_VIN:
-            print("    VFB_MAX = %0.06f V" % (max_gain * VIN))
-            print("    VFB_NOM = %0.06f V" % (nom_gain * VIN))
-            print("    VFB_MIN = %0.06f V" % (min_gain * VIN))
+            print(f"    VFB_MAX = {round(max_gain * VIN, 4)} V")
+            print(f"    VFB_NOM = {round(nom_gain * VIN, 4)} V")
+            print(f"    VFB_MIN = {round(min_gain * VIN, 4)} V")
 
         else:
-            print(
-                "    VIN_MAX = %0.06f V" % ((1 / min_gain) * VFB_MAX - ((1 / min_gain) - 1) * VGND)
-            )
-            print("    VIN_NOM = %0.06f V" % ((1 / nom_gain) * VFB - ((1 / nom_gain) - 1) * VGND))
-            print(
-                "    VIN_MIN = %0.06f V" % ((1 / max_gain) * VFB_MIN - ((1 / max_gain) - 1) * VGND)
-            )
+            vin_max = (1 / min_gain) * VFB_MAX - ((1 / min_gain) - 1) * VGND
+            vin_nom = (1 / nom_gain) * VFB - ((1 / nom_gain) - 1) * VGND
+            vin_min = (1 / max_gain) * VFB_MIN - ((1 / max_gain) - 1) * VGND
+            print(f"    VIN_MAX = {round(vin_max, 4)} V")
+            print(f"    VIN_NOM = {round(vin_nom, 4)} V")
+            print(f"    VIN_MIN = {round(vin_min, 4)} V")
 
     print()
