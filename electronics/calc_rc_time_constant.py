@@ -5,16 +5,16 @@ constant method
 """
 
 # Standard library imports
-import sys
 import math
 import pathlib
 
-# Add parent directory to sys.path to allow this script to import modules
-# placed higher up in the directory hierarchy.
-module_name = "python3-utils"
-pkg_dir = __file__[0 : __file__.find(module_name) + len(module_name)]
-sys.path.append(pkg_dir)
+# Add parent directory to sys.path to allow this script to import all local modules.
+if __name__ == "__main__":
+    import sys
 
+    module_name = "python3-utils"
+    pkg_dir = __file__[0 : __file__.find(module_name) + len(module_name)]
+    sys.path.append(pkg_dir)
 
 # Local library imports
 from utils.eng_multipliers import *
@@ -25,15 +25,15 @@ from utils.eng_multipliers import *
 ###############################################################################
 
 # Supply voltage, in voltage
-V_SUP = 3.3  # Volts
+V_SUP = 5.1  # Volts
 
 # RC resistor and capacitor values
-RES_OHMS = kilo(36.0)  # Ohms
+RES_OHMS = kilo(100.0)  # Ohms
 
 CAP_FARADS = nano(100)  # Farads
 
 # Write results to a CSV file for easy plotting.
-EXPORT_TO_CSV = False
+EXPORT_TO_CSV = True
 CSV_FILE_NAME = "rc_curves.csv"
 
 

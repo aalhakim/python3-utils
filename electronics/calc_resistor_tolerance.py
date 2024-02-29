@@ -4,31 +4,32 @@
 Calculate error in resistor potential divider networks.
 """
 
+
 ###############################################################################
 # --- User Inputs
 ###############################################################################
 
 # Top resistor value (in kOhms)
-RTOP = 124.0
+RTOP = 150.0
 
 # Bottom resistor value (in kOhms)
-RBOT = 40.2
+RBOT = 36.0
 
 # Input voltage (in Volts)
-VIN = 6.8
+VIN = 3.3
 
 # Ground reference voltage (in Volts), typically 0.0 V
 VGND = 0.00
 
 # Set to True to calculate VFB from VIN.
 # Set to False to calculate VIN values from VFB
-CALCULATE_VFB_FROM_VIN = False
+CALCULATE_VFB_FROM_VIN = True
 
 # Feedback voltage level(s)
 #  VFB_MIN/MAX are relevant for DC-DC converters where the feedback reference
 #  has some error which may affect DC-DC regulation accuracy under some
 # conditions.
-VFB = 0.8
+VFB = 0.6
 VFB_TOL = None
 
 if VFB_TOL is not None:

@@ -44,15 +44,18 @@ VSUP_TEMP_SENSOR = 5.0  # The NTC network voltage reference, in Volts
 #   + 3434: Murata NCP03XH103F (10k)
 #   + 3434: Murata NCU18XH103F60RB (10k)
 #   + 4250: Murata NCU18WF104F6SRB (100k)
+#   + 3435: TDK B57332V5103F360 (10k)
 NTC_R25 = 100000  # The NTC resistance at 25degC, in Ohms
 NTC_BETA_2585 = 4250  # The NTC temperature coefficient (beta)
 
+# Steinhart-Hart properties.
 NTC_PROPERTY_A1 = 3.354016e-3
 NTC_PROPERTY_B1 = 2.569850e-4
 NTC_PROPERTY_C1 = 2.620131e-6
 NTC_PROPERTY_D1 = 6.383091e-8
 
-kZERO_CELSIUS_IN_KELVIN = 273.15  # Used to calculate NTC temperature
+# Used to calculate NTC temperature
+kZERO_CELSIUS_IN_KELVIN = 273.15
 
 
 ########################################################################
@@ -66,15 +69,11 @@ def calc_ntc_resistance_from_volts(vMeas, ntcPos="bot"):
     # network with NTC resistance as the subject
     if ntcPos == "bot":
         rThermistor = (vMeas * RTOP_TEMP_SENSOR * RBOT_TEMP_SENSOR) / (
-            (VSUP_TEMP_SENSOR * RBOT_TEMP_SENSOR)
-            - (vMeas * (RTOP_TEMP_SENSOR + RBOT_TEMP_SENSOR))
+            (VSUP_TEMP_SENSOR * RBOT_TEMP_SENSOR) - (vMeas * (RTOP_TEMP_SENSOR + RBOT_TEMP_SENSOR))
         )
     elif ntcPos == "top":
-        rThermistor = (
-            RTOP_TEMP_SENSOR * RBOT_TEMP_SENSOR * (VSUP_TEMP_SENSOR - vMeas)
-        ) / (
-            (vMeas * (RTOP_TEMP_SENSOR + RBOT_TEMP_SENSOR))
-            - (VSUP_TEMP_SENSOR * RBOT_TEMP_SENSOR)
+        rThermistor = (RTOP_TEMP_SENSOR * RBOT_TEMP_SENSOR * (VSUP_TEMP_SENSOR - vMeas)) / (
+            (vMeas * (RTOP_TEMP_SENSOR + RBOT_TEMP_SENSOR)) - (VSUP_TEMP_SENSOR * RBOT_TEMP_SENSOR)
         )
     else:
         raise RuntimeError(f"Unknown value of ntcPos: '{ntcPos}'.")
@@ -90,8 +89,7 @@ def calc_ntc_resistance_from_celsius(tCelsius):
 
     # This is Thermistor Beta Equation with NTC resistance as the subject
     exponent = NTC_BETA_2585 * (
-        (1 / (kZERO_CELSIUS_IN_KELVIN + tCelsius))
-        - (1 / (kZERO_CELSIUS_IN_KELVIN + 25.0))
+        (1 / (kZERO_CELSIUS_IN_KELVIN + tCelsius)) - (1 / (kZERO_CELSIUS_IN_KELVIN + 25.0))
     )
     rThermistor = NTC_R25 * math.exp(exponent)
     return rThermistor
@@ -226,11 +224,7 @@ if __name__ == "__main__":
 
     print("")
     print("  +-{0:-^14s}-|-{0:-^14s}-|-{0:-^7s}-+".format(""))
-    print(
-        "  | {0: ^14s} | {1: ^14s} | {2: ^7s} |".format(
-            "TEMPERATURE", "RESISTANCE", "VOLTAGE"
-        )
-    )
+    print("  | {0: ^14s} | {1: ^14s} | {2: ^7s} |".format("TEMPERATURE", "RESISTANCE", "VOLTAGE"))
     print("  +-{0:-^14s}-|-{0:-^14s}-|-{0:-^7s}-+".format(""))
 
     # Calculate expected NTC resistance and NTC potential divider voltages

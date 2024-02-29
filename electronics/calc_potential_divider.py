@@ -1,7 +1,38 @@
-import math
+#!/usr/bin/env python3
+
+"""
+Suggest E24/E48 resistor values for a potential divider circuit. Provides VOUT
+for a given VIN or VIN for a given VOUT (useful for DC-DC converter feedback
+circuits).
+"""
+
+# Add parent directory to sys.path to allow this script to import all local modules.
+if __name__ == "__main__":
+    import sys
+
+    module_name = "python3-utils"
+    pkg_dir = __file__[0 : __file__.find(module_name) + len(module_name)]
+    sys.path.append(pkg_dir)
 
 
-########################################################################
+# Local library imports
+from utils.resistors import E12, E24, E48, E96, ALL
+
+
+###############################################################################
+# --- User Inputs
+###############################################################################
+
+# The input voltage to the potential divider
+VSRC = 3.3  # V
+
+# The desired output voltage from the potential divider.
+VREF = 0.6  # V
+
+
+###############################################################################
+# --- Functions
+###############################################################################
 def list_multiply(list1, list2):
     """
     Return a list containing the results of multiplying every value in
@@ -15,58 +46,6 @@ def list_multiply(list1, list2):
     return product
 
 
-def print_table_divider():
-    print(" |-{0:-^5s}-|-{0:-^8s}---{0:-^8s}-|--{0:-^7s}----{0:-^7s}-|".format("-"))
-
-
-########################################################################
-# RESISTORS
-# fmt: off
-E12 = [100, 120, 150, 180, 220, 270, 330, 390, 470, 560, 680, 820]
-
-E24 = [
-    100, 110, 120, 130, 150, 160, 180,
-    200, 220, 240, 270,
-    300, 330, 360, 390,
-    430, 470,
-    510, 560,
-    620, 680,
-    750, 820, 910
-    ]
-
-E48 = [
-    100, 105, 110, 115, 121, 127, 133, 140, 147, 154, 162, 169, 178, 187, 196,
-    205, 215, 226, 237, 249, 261, 274, 287,
-    301, 316, 332, 348, 365, 383,
-    402, 422, 442, 464, 487,
-    511, 536, 562, 590,
-    619, 649, 681,
-    715, 750, 787,
-    825, 866,
-    909, 953
-    ]
-
-E96 = [
-    100, 102, 105, 107, 110, 113, 115, 118, 121, 124, 127, 130, 133, 137, 140, 143, 147,
-    150, 154, 158, 162, 165, 169, 174, 178, 182, 187, 191, 196,
-    200, 205, 210, 215, 221, 226, 232, 237, 243, 249, 255, 261, 267, 274, 280, 287, 294,
-    301, 309, 316, 324, 332, 340, 348, 357, 365, 374, 383, 392,
-    402, 412, 422, 432, 442, 453, 464, 475, 487, 499,
-    511, 523, 536, 549, 562, 576, 590,
-    604, 619, 634, 649, 665, 681, 698,
-    715, 732, 750, 768, 787,
-    806, 825, 845, 866, 887,
-    909, 931, 953, 976
-    ]
-
-ALL = list(set(E12 + E24 + E48 + E96))
-ALL.sort()
-
-E12_UNIQUE = E12
-E24_UNIQUE = [v for v in E24 if v not in E12]
-E48_UNIQUE = [v for v in E48 if v not in E12 + E24]
-E96_UNIQUE = [v for v in E96 if v not in E12 + E24 + E48]
-
 MULTIPLIER = [0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000]
 
 E12_SET = list_multiply(E12, MULTIPLIER)
@@ -76,8 +55,6 @@ E96_SET = list_multiply(E96, MULTIPLIER)
 FULL_SET = list(set(E12_SET + E24_SET + E48_SET + E96_SET))
 
 
-# fmt: on
-########################################################################
 def calculate_rtop_e24(vsrc, vref, error_target=10):
     # rtop = rbot*(vsrc - vref) / vref
     success = False
@@ -139,21 +116,24 @@ def calculate_vref(vsrc, rtop, rbot):
     return vsrc * rbot / (rbot + rtop)
 
 
-########################################################################
+def print_table_divider():
+    print(" |-{0:-^5s}-|-{0:-^8s}---{0:-^8s}-|--{0:-^7s}----{0:-^7s}-|".format("-"))
+
+
+def print_table_header():
+    headings = ["ERR", "RTOP", "RBOT", "VREF", "VOUT"]
+    print_table_divider()
+    print(" | {: ^5s} | {: ^8s} | {: ^8s} |  {:^7s} |  {:^7s} |".format(*headings))
+    print_table_divider()
+
+
+###############################################################################
+# --- Main Code
+###############################################################################
 if __name__ == "__main__":
 
-    VSRC = 11.0  # V
-    VREF = 1.235  # V
-
-    print()
-    print("E24 VALUES ONLY")
-    print_table_divider()
-    print(
-        " | {: ^5s} | {: ^8s} | {: ^8s} |  {:^7s} |  {:^7s} |".format(
-            "ERR", "RTOP", "RBOT", "VREF", "VOUT"
-        )
-    )
-    print_table_divider()
+    print("\nE24 VALUES ONLY")
+    print_table_header()
     success = False
     error_target = 0
     error_max = 0
@@ -162,15 +142,9 @@ if __name__ == "__main__":
         error_target += 1
     print_table_divider()
 
-    print()
-    print("E24 and E96 VALUES")
-    print_table_divider()
-    print(
-        " | {: ^5s} | {: ^8s} | {: ^8s} |  {:^7s} |  {:^7s} |".format(
-            "ERR", "RTOP", "RBOT", "VREF", "VOUT"
-        )
-    )
-    print_table_divider()
+    # -------------------------------------------------------------------------
+    print("\nE24 and E96 VALUES")
+    print_table_header()
     success = False
     error_target = 0
     error_max = 1
@@ -178,7 +152,3 @@ if __name__ == "__main__":
         success = calculate_rtop_e96(VSRC, VREF, error_target)
         error_target += 1
     print_table_divider()
-
-    print()
-    print(calculate_vout(1.4, 43.0, 18.0))
-    print(calculate_vref(3.3, 100000.0, 15000.0))
